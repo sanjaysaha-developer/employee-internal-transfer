@@ -4,7 +4,7 @@ _This is a quick way to see what's going on without needing a meeting._
 ## Active work
 | Feature | Title | Status | Owner | Last update | Notes |
 |---|---|---|---|---|---|
-| employee-internal-transfer | Employee Internal Transfer | v1.2 Built and tested; v1.3 & v1.4 deltas Plan Drafted — Tasks pending | Candidate (assessment) | Day 13 | v1.2 unchanged/live. v1.3 adds AC17 (Stakeholder Inbox fix — real frontend change). v1.4 formalizes AC18 (already-correct backend behavior, no code change). Plan delta added to `employee-internal-transfer.plan.md`; next step is Task breakdown, then TDD RED (UT18/UT19) before any code change. |
+| employee-internal-transfer | Employee Internal Transfer | v1.2 Built and tested; v1.3 & v1.4 deltas Tasks Generated (T11-T15) — TDD pending | Candidate (assessment) | Day 13 | v1.2 unchanged/live. v1.3 adds AC17 (Stakeholder Inbox fix — real frontend change). v1.4 formalizes AC18/AC7-role-only (already-correct backend behavior, confirmation tests only). Tasks T11-T15 added; next step is TDD — add frontend test infra (T11), then RED/GREEN per task order. No code touched yet. |
 
 ## Day-by-day log
 
@@ -103,3 +103,10 @@ _This is a quick way to see what's going on without needing a meeting._
   existing behavior explicit and tested. Next step: Task breakdown, then TDD
   RED (UT18 should fail today, UT19 should already pass) before touching
   `StakeholderInbox.jsx`.
+- **Tasks generated** (`employee-internal-transfer.tasks.md`, T11-T15):
+  T11 adds missing frontend test infrastructure (no test runner/RTL exists
+  yet — constitution gap, not previously needed since v1.2 had no frontend
+  logic tests); T12/T13 write UT19/UT20 as confirmation tests (expected
+  GREEN immediately); T14 writes UT18 (expected RED), then implements the
+  `StakeholderInbox.jsx` fix; T15 runs the full suite before Gate 2. `test_cases.md`
+  synced with UT18/UT19/UT20 rows. No code touched yet.

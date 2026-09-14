@@ -1,7 +1,10 @@
 # Test Cases: Employee Internal Transfer
 
 ## Based on
-`.ai-context/specs/employee-internal-transfer.spec.md` (version 1.2)
+`.ai-context/specs/employee-internal-transfer.spec.md` (version 1.2 — base
+table below; version 1.4, Gate 1 Approved 2026-09-14, adds UT18-UT20 — see
+`.ai-context/pr_reviews/GATE1-employee-internal-transfer-v1.4.md` and the
+Plan Delta in `.ai-context/plans/employee-internal-transfer.plan.md`)
 
 This file has two parts: the tests that come straight from the spec's own
 rules (same list as in the spec), and extra tests a tester would add to check
@@ -30,6 +33,9 @@ feature in the project.
 | UT15 | AC14 | View details as an unrelated employee | 403, no data returned |
 | UT16 | AC15 | Try to act on an HR item as an unrelated employee | 403, NOT_ASSIGNEE, nothing changes |
 | UT17 | AC16 | HR checks their pending items, some already done | only the still-pending ones come back |
+| UT18 _(added v1.3)_ | AC17 | On Stakeholder Inbox, switch "Logged in as" while "Acting as: PAYROLL team" is selected | "Acting as" resets to "Myself"; list reloads for the new identity's own items — `tests/frontend/pages/StakeholderInbox.test.jsx` |
+| UT19 _(added v1.4)_ | AC18 | Manager rejects with a reason, then the employee views the request via API02 | response includes the MANAGER action's `notes` field with the rejection reason — `backend/tests/transferRequests.test.js` (confirmation test: behavior already exists, expected GREEN on first run, not a RED→GREEN cycle) |
+| UT20 _(added v1.4)_ | AC7 | HR approves; role different, dept+location same | yes PAYROLL (role changed), no FACILITIES, yes IT (always) — `backend/tests/transferRequests.test.js` (confirmation test: fan-out logic already exists, expected GREEN on first run) |
 
 ## Extra tests a tester would add
 
@@ -64,6 +70,9 @@ feature in the project.
 
 ## Who owns what
 A tester checks the odd-data and error-case scenarios above. The rules listed
-in "Tests that come straight from the spec" (UT01–UT17) are the bare minimum —
+in "Tests that come straight from the spec" (UT01–UT20) are the bare minimum —
 every one of them must pass before this feature is allowed to move to the
-final review (Gate 2).
+final review (Gate 2). UT18 is new frontend logic (must go RED before the
+fix, then GREEN); UT19 and UT20 are confirmation tests for behavior that was
+already correct in v1.2 — see the Plan Delta for why they don't follow a
+RED→GREEN cycle.
