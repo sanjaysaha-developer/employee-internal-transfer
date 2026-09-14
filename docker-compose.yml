@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-eit}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-eit}
+      POSTGRES_DB: ${POSTGRES_DB:-employee_internal_transfer}
+    ports:
+      - "${POSTGRES_HOST_PORT:-5433}:5432"
+    volumes:
+      - eit_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-eit}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-eit}:${POSTGRES_PASSWORD:-eit}@postgres:5432/${POSTGRES_DB:-employee_internal_transfer}
+      PORT: 5002
+    ports:
+      - "${BACKEND_HOST_PORT:-5002}:5002"
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      VITE_API_BASE_URL: http://localhost:${BACKEND_HOST_PORT:-5002}/api/v1
+    ports:
+      - "${FRONTEND_HOST_PORT:-5173}:5173"
+
+volumes:
+  eit_pgdata:

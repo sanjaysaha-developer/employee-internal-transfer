@@ -1,0 +1,187 @@
+<!--
+  Gate Review Dashboard (design template)
+  Purpose: visualize Gate 1 / Gate 2 status, active specs, approval comments,
+  and compliance checks for the INT SDD lifecycle.
+
+  This is a static design template checked into .ai-context/templates/.
+  To use it for a real project snapshot, duplicate it, then edit the
+  `specs` array below to reflect current spec status (sourced from
+  .ai-context/status.md and each spec's "Gate Approvals & History" table).
+  This file is not wired to a build step or live data source.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gate Review Dashboard</title>
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --surface: #ffffff;
+    --border: #e2e1dd;
+    --text: #1f1e1c;
+    --text-muted: #6b6a66;
+    --accent: #3b5bdb;
+    --green: #2f9e44;
+    --amber: #e8590c;
+    --red: #c92a2a;
+    --gray: #868e96;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17181a;
+      --surface: #212226;
+      --border: #34363a;
+      --text: #ecebe8;
+      --text-muted: #9b9a96;
+      --accent: #7c96f5;
+      --green: #69db7c;
+      --amber: #ffa94d;
+      --red: #ff8787;
+      --gray: #adb5bd;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17181a;
+    --surface: #212226;
+    --border: #34363a;
+    --text: #ecebe8;
+    --text-muted: #9b9a96;
+    --accent: #7c96f5;
+    --green: #69db7c;
+    --amber: #ffa94d;
+    --red: #ff8787;
+    --gray: #adb5bd;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    padding: 24px 16px 48px;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  .subtitle { color: var(--text-muted); margin: 0 0 24px; font-size: 0.9rem; }
+  .summary-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .stat .n { font-size: 1.6rem; font-weight: 600; }
+  .stat .l { font-size: 0.8rem; color: var(--text-muted); }
+  table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 0.85rem; vertical-align: top; }
+  th { color: var(--text-muted); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; }
+  tr:last-child td { border-bottom: none; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+  .badge.approved { background: color-mix(in srgb, var(--green) 18%, transparent); color: var(--green); }
+  .badge.pending { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber); }
+  .badge.rejected { background: color-mix(in srgb, var(--red) 18%, transparent); color: var(--red); }
+  .badge.na { background: color-mix(in srgb, var(--gray) 18%, transparent); color: var(--gray); }
+  .section { margin-top: 32px; }
+  .section h2 { font-size: 1rem; margin-bottom: 10px; }
+  .comment { border-left: 3px solid var(--accent); padding: 8px 12px; margin-bottom: 10px; background: var(--surface); border-radius: 0 8px 8px 0; font-size: 0.85rem; }
+  .comment .meta { color: var(--text-muted); font-size: 0.75rem; margin-bottom: 4px; }
+  .overflow-x { overflow-x: auto; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Gate Review Dashboard</h1>
+  <p class="subtitle">Gate 1 (Spec Peer Review) &amp; Gate 2 (Code Review) status across active specs — edit the <code>specs</code> array in the script below with real data.</p>
+
+  <div class="summary-row" id="summary"></div>
+
+  <div class="section overflow-x">
+    <h2>Specs</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Spec ID</th>
+          <th>Title</th>
+          <th>Status</th>
+          <th>Gate 1</th>
+          <th>Gate 2</th>
+          <th>Last Update</th>
+        </tr>
+      </thead>
+      <tbody id="specRows"></tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>Recent Approval Comments</h2>
+    <div id="comments"></div>
+  </div>
+</div>
+
+<script>
+  // Replace with real values sourced from .ai-context/status.md and each
+  // spec's "Gate Approvals & History" table.
+  const specs = [
+    {
+      id: "<feature-slug>",
+      title: "<Feature Title>",
+      status: "Draft",
+      gate1: "na",       // approved | pending | rejected | na
+      gate2: "na",
+      lastUpdate: "YYYY-MM-DD",
+      comments: [
+        { gate: "Gate 1", reviewer: "<Reviewer Name>", date: "YYYY-MM-DD", text: "<Approval / change-request comment>" }
+      ]
+    }
+  ];
+
+  const badgeLabel = { approved: "Approved", pending: "Pending", rejected: "Rejected", na: "N/A" };
+
+  function badge(state) {
+    return `<span class="badge ${state}">${badgeLabel[state] || "N/A"}</span>`;
+  }
+
+  const summaryEl = document.getElementById("summary");
+  const total = specs.length;
+  const gate1Approved = specs.filter(s => s.gate1 === "approved").length;
+  const gate2Approved = specs.filter(s => s.gate2 === "approved").length;
+  const pending = specs.filter(s => s.gate1 === "pending" || s.gate2 === "pending").length;
+  summaryEl.innerHTML = [
+    { n: total, l: "Active Specs" },
+    { n: gate1Approved, l: "Gate 1 Approved" },
+    { n: gate2Approved, l: "Gate 2 Approved" },
+    { n: pending, l: "Pending Review" }
+  ].map(s => `<div class="stat"><div class="n">${s.n}</div><div class="l">${s.l}</div></div>`).join("");
+
+  const rowsEl = document.getElementById("specRows");
+  rowsEl.innerHTML = specs.map(s => `
+    <tr>
+      <td>${s.id}</td>
+      <td>${s.title}</td>
+      <td>${s.status}</td>
+      <td>${badge(s.gate1)}</td>
+      <td>${badge(s.gate2)}</td>
+      <td>${s.lastUpdate}</td>
+    </tr>
+  `).join("");
+
+  const commentsEl = document.getElementById("comments");
+  const allComments = specs.flatMap(s => (s.comments || []).map(c => ({ ...c, specId: s.id })));
+  commentsEl.innerHTML = allComments.length
+    ? allComments.map(c => `
+      <div class="comment">
+        <div class="meta">${c.specId} · ${c.gate} · ${c.reviewer} · ${c.date}</div>
+        <div>${c.text}</div>
+      </div>
+    `).join("")
+    : `<p style="color:var(--text-muted); font-size:0.85rem;">No approval comments recorded yet.</p>`;
+</script>
+</body>
+</html>

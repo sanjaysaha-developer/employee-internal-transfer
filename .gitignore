@@ -1,0 +1,33 @@
+node_modules/
+.env
+*.log
+
+# --- Added by INT AI-First project setup sync (2026-09-14), additive only ---
+
+# Dependencies
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment & Secrets
+.env.local
+.env.*.local
+*.pem
+
+# Build & Production Outputs
+dist/
+build/
+coverage/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Logs & Temporary Files
+scratch/
+
+# CRITICAL: DO NOT IGNORE INT CONTROL PLANE OR KNOWLEDGE BASE
+!.agent/
+!.ai-context/
+!.agents/
+!AGENTS.md
