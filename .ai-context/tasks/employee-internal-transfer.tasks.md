@@ -75,11 +75,23 @@ No code has been touched yet. One task at a time, per policy._
       `employee-internal-transfer.AC7/UT07/UT08` describe block (renamed to
       include UT20). Full suite run: **22/22 passing** (20 baseline + UT19 +
       UT20), no code change.
-- [ ] **T14** — Write **UT18** (AC17) against
+- [x] **T14** — Write **UT18** (AC17) against
       `frontend/src/pages/StakeholderInbox.jsx` (needs T11 done first). Run
       it and confirm it's **RED** — the "Acting as" selector does not yet
       reset when "Logged in as" changes. Then implement the `useEffect` fix
       described in the Plan Delta, and confirm UT18 goes **GREEN**.
-- [ ] **T15** — Run the full backend + frontend test suite (UT01–UT20 plus
+      **Done:** `frontend/tests/pages/StakeholderInbox.test.jsx` (2 cases:
+      selector resets to Myself; pending-items list reloads for the new
+      identity). Confirmed RED first. The first implementation attempt (a
+      plain second `useEffect` on `[employeeId]` calling `setActAsRole('')`)
+      went GREEN but a debug check found it fired one avoidable API call
+      with the *new* employeeId and the *stale* role first — the same
+      stale-identity leak AC17 exists to prevent, just moved into the
+      network call. Fixed with a `prevEmployeeIdRef` guard inside the single
+      refresh effect so exactly one, correctly-scoped call happens. Both
+      cases GREEN after the fix.
+- [x] **T15** — Run the full backend + frontend test suite (UT01–UT20 plus
       T11's new frontend suite) and confirm 100% pass with no regressions on
       v1.2's existing behavior, before submitting for Gate 2.
+      **Done:** backend 22/22 passing (real Postgres); frontend 2/2 passing.
+      No regressions.

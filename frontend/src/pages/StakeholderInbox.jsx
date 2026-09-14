@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { api } from '../api.js';
 
 // employee-internal-transfer.T09 — minimal shared inbox for Manager/HR/
@@ -23,7 +23,29 @@ export default function StakeholderInbox({ employeeId }) {
     const res = await api.listMyPendingActions(employeeId, actAsRole || undefined);
     setItems(res.items);
   }
-  useEffect(() => { refresh(); }, [employeeId, actAsRole]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // AC17 (v1.3) — reset "Acting as" to "Myself" whenever the logged-in
+  // employee changes, so a previously-selected team queue (e.g. PAYROLL)
+  // never silently carries over under a new identity. Tracked via a ref
+  // (not just a second useEffect on [employeeId]) so the identity-change
+  // and role-reset happen in the *same* effect run as the refresh: two
+  // separate effects both depending on employeeId would each fire once
+  // with this render's still-stale actAsRole before the reset takes effect,
+  // firing one avoidable fetch for the new employee under the old role
+  // first — the same stale-identity leak AC17 exists to prevent, just
+  // moved into the network call instead of the UI. Frontend-only; does not
+  // touch API07's contract (AC16 is unaffected).
+  const prevEmployeeIdRef = useRef(employeeId);
+  useEffect(() => {
+    if (prevEmployeeIdRef.current !== employeeId) {
+      prevEmployeeIdRef.current = employeeId;
+      if (actAsRole !== '') {
+        setActAsRole(''); // re-triggers this effect with actAsRole=''; skip fetching now
+        return;
+      }
+    }
+    refresh();
+  }, [employeeId, actAsRole]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function act(item, decision) {
     setMessage(null);

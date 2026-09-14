@@ -4,7 +4,7 @@ _This is a quick way to see what's going on without needing a meeting._
 ## Active work
 | Feature | Title | Status | Owner | Last update | Notes |
 |---|---|---|---|---|---|
-| employee-internal-transfer | Employee Internal Transfer | v1.2 Built and tested; v1.3 & v1.4 deltas Under Development (T11-T13 done, T14-T15 pending) | Candidate (assessment) | Day 13 | v1.2 unchanged/live. T11 (frontend test infra), T12/T13 (UT19/UT20, both confirmed GREEN, no code change) done — 22/22 backend tests passing. Next: T14 (UT18 RED, StakeholderInbox.jsx fix, GREEN), then T15 (full regression) before Gate 2. |
+| employee-internal-transfer | Employee Internal Transfer | v1.2 Built and tested; v1.3 & v1.4 deltas Development complete (T11-T15 done) — ready for Gate 2 | Candidate (assessment) | Day 13 | v1.2 unchanged/live. All delta tasks (T11-T15) done: backend 22/22, frontend 2/2, no regressions. AC17 fix implemented in StakeholderInbox.jsx; AC18/AC7-role-only confirmed already-correct. Next: Gate 2 code review. |
 
 ## Day-by-day log
 
@@ -123,3 +123,12 @@ _This is a quick way to see what's going on without needing a meeting._
   predicted, zero implementation change. Full backend suite: **22/22
   passing** (20 baseline + UT19 + UT20). Next: T14 (UT18, the one real code
   change in this delta).
+- **T14/T15 done** — UT18 added to
+  `frontend/tests/pages/StakeholderInbox.test.jsx`, confirmed RED, then
+  implemented the AC17 fix in `StakeholderInbox.jsx`. First implementation
+  attempt (plain `useEffect` on `employeeId` resetting `actAsRole`) went
+  GREEN but a debug check caught it firing one avoidable API call under the
+  *new* identity with the *stale* role first — fixed with a
+  `prevEmployeeIdRef` guard so exactly one, correctly-scoped call happens.
+  Full regression: backend 22/22, frontend 2/2, no regressions. **All delta
+  tasks (T11-T15) complete — ready for Gate 2.**

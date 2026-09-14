@@ -33,7 +33,7 @@ feature in the project.
 | UT15 | AC14 | View details as an unrelated employee | 403, no data returned |
 | UT16 | AC15 | Try to act on an HR item as an unrelated employee | 403, NOT_ASSIGNEE, nothing changes |
 | UT17 | AC16 | HR checks their pending items, some already done | only the still-pending ones come back |
-| UT18 _(added v1.3)_ | AC17 | On Stakeholder Inbox, switch "Logged in as" while "Acting as: PAYROLL team" is selected | "Acting as" resets to "Myself"; list reloads for the new identity's own items — `tests/frontend/pages/StakeholderInbox.test.jsx` |
+| UT18 _(added v1.3)_ | AC17 | On Stakeholder Inbox, switch "Logged in as" while "Acting as: PAYROLL team" is selected | "Acting as" resets to "Myself"; list reloads for the new identity's own items — `frontend/tests/pages/StakeholderInbox.test.jsx` |
 | UT19 _(added v1.4)_ | AC18 | Manager rejects with a reason, then the employee views the request via API02 | response includes the MANAGER action's `notes` field with the rejection reason — `backend/tests/transferRequests.test.js` (confirmation test: behavior already exists, expected GREEN on first run, not a RED→GREEN cycle) |
 | UT20 _(added v1.4)_ | AC7 | HR approves; role different, dept+location same | yes PAYROLL (role changed), no FACILITIES, yes IT (always) — `backend/tests/transferRequests.test.js` (confirmation test: fan-out logic already exists, expected GREEN on first run) |
 
