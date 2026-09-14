@@ -4,7 +4,7 @@ _This is a quick way to see what's going on without needing a meeting._
 ## Active work
 | Feature | Title | Status | Owner | Last update | Notes |
 |---|---|---|---|---|---|
-| employee-internal-transfer | Employee Internal Transfer | v1.2 Built and tested; v1.3 & v1.4 deltas Gate 1 Approved — Plan/Tasks pending | Candidate (assessment) | Day 13 | v1.2 unchanged/live. v1.3 adds AC17 (Stakeholder Inbox fix). v1.4 closes the Gate 1 review's conditions (AC18 + doc gaps). Both Gate 1 Approved by Supratim Jetty on Day 13; neither has been implemented yet — next step is Plan/Tasks for the delta. |
+| employee-internal-transfer | Employee Internal Transfer | v1.2 Built and tested; v1.3 & v1.4 deltas Plan Drafted — Tasks pending | Candidate (assessment) | Day 13 | v1.2 unchanged/live. v1.3 adds AC17 (Stakeholder Inbox fix — real frontend change). v1.4 formalizes AC18 (already-correct backend behavior, no code change). Plan delta added to `employee-internal-transfer.plan.md`; next step is Task breakdown, then TDD RED (UT18/UT19) before any code change. |
 
 ## Day-by-day log
 
@@ -94,3 +94,12 @@ _This is a quick way to see what's going on without needing a meeting._
   Status line from "In Peer Review" to "Approved (Gate 1 Passed)".
 - Next step: generate/update the Plan and Tasks for the v1.3 (AC17) + v1.4
   (AC18) deltas — no code has been touched yet.
+- **Plan Delta added** to `.ai-context/plans/employee-internal-transfer.plan.md`
+  ("Plan Delta — v1.3/v1.4" section): AC17 needs a real frontend fix (reset
+  `actAsRole` in `StakeholderInbox.jsx` when `employeeId` changes); AC18
+  needs **no code change** — confirmed the backend (`transferService.js`)
+  already returns rejection `notes` via API02 and already gates the response
+  with the AC14 403 check, so it only needs new test case UT19 to make the
+  existing behavior explicit and tested. Next step: Task breakdown, then TDD
+  RED (UT18 should fail today, UT19 should already pass) before touching
+  `StakeholderInbox.jsx`.
