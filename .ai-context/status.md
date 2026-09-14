@@ -4,7 +4,7 @@ _This is a quick way to see what's going on without needing a meeting._
 ## Active work
 | Feature | Title | Status | Owner | Last update | Notes |
 |---|---|---|---|---|---|
-| employee-internal-transfer | Employee Internal Transfer | v1.2 Built and tested; v1.3 & v1.4 deltas In Peer Review (Gate 1) | Candidate (assessment) | Day 12 | v1.2 unchanged/live. v1.3 proposes AC17 (Stakeholder Inbox fix). v1.4 closes the Gate 1 review's conditions (AC18 + doc gaps). Neither has been implemented yet. |
+| employee-internal-transfer | Employee Internal Transfer | v1.2 Built and tested; v1.3 & v1.4 deltas Gate 1 Approved — Plan/Tasks pending | Candidate (assessment) | Day 13 | v1.2 unchanged/live. v1.3 adds AC17 (Stakeholder Inbox fix). v1.4 closes the Gate 1 review's conditions (AC18 + doc gaps). Both Gate 1 Approved by Supratim Jetty on Day 13; neither has been implemented yet — next step is Plan/Tasks for the delta. |
 
 ## Day-by-day log
 
@@ -77,3 +77,20 @@ _This is a quick way to see what's going on without needing a meeting._
   - Spec bumped to **v1.4**, status "In Peer Review"; Gate Approvals &
     History table updated with the review outcome. Nothing implemented yet —
     next step is closing v1.3 + v1.4 Gate 1 before touching any code.
+
+### Day 13 — Gate 1 formally closed
+- User supplied `Gate1_Review_SanjaySaha.docx` again and confirmed the
+  Project Manager (Supratim Jetty, approver of record — see
+  `project_context.md` Roles & Approvers) has approved the spec, with the
+  review's conditions to be verified.
+- Audited the full docx text line-by-line against the current repo (not just
+  the earlier summary): all 8 findings (1 RED, 5 AMBER, 2 GREEN) were
+  confirmed already closed in v1.4 — no spec content changed as part of this
+  closeout, only the formal sign-off was missing.
+- Recorded the closeout as
+  `.ai-context/pr_reviews/GATE1-employee-internal-transfer-v1.4.md`, updated
+  the spec's Gate Approvals & History table (v1.3 delta + v1.4
+  conditions-closure row → **Approved**, 2026-09-14), and flipped the spec
+  Status line from "In Peer Review" to "Approved (Gate 1 Passed)".
+- Next step: generate/update the Plan and Tasks for the v1.3 (AC17) + v1.4
+  (AC18) deltas — no code has been touched yet.
