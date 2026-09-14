@@ -41,11 +41,22 @@ _Added 2026-09-14, from the Plan Delta in
 Approval — see `.ai-context/pr_reviews/GATE1-employee-internal-transfer-v1.4.md`.
 No code has been touched yet. One task at a time, per policy._
 
-- [ ] **T11** — Add frontend test infrastructure: the frontend currently has
+- [x] **T11** — Add frontend test infrastructure: the frontend currently has
       no test runner or React Testing Library configured at all (`vite` +
       React only — see `frontend/package.json`), which the constitution
       requires for "anything with real logic." This is a one-time foundation
       task, not tied to a single AC — UT18 below depends on it existing.
+      **Done:** Vitest 2.x (pinned to match the existing `vite@^5.4.8`, not
+      the latest Vitest which needs Vite 6+ — no ADR to justify a Vite
+      upgrade here) + React Testing Library + jest-dom + user-event added as
+      devDependencies; `frontend/vitest.config.js` (jsdom environment,
+      `frontend/tests/setup.js`) and an `npm test` script added. Verified
+      with a throwaway smoke test (render + RTL query + jest-dom matcher),
+      confirmed passing via `npm test`, then removed — not a real test case.
+      `npm audit` flags known dev-only vulnerabilities in `esbuild`/`vitest`'s
+      transitive deps that only resolve via a Vite/Vitest major upgrade;
+      left as-is pending a decision on upgrading Vite (out of scope for this
+      task).
 - [ ] **T12** — Write **UT19** (AC18) against
       `backend/src/services/transferService.js` / `backend/tests/`. Run it
       and confirm it's already **GREEN** — the Plan Delta found `notes` is

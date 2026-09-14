@@ -4,7 +4,7 @@ _This is a quick way to see what's going on without needing a meeting._
 ## Active work
 | Feature | Title | Status | Owner | Last update | Notes |
 |---|---|---|---|---|---|
-| employee-internal-transfer | Employee Internal Transfer | v1.2 Built and tested; v1.3 & v1.4 deltas Tasks Generated (T11-T15) — TDD pending | Candidate (assessment) | Day 13 | v1.2 unchanged/live. v1.3 adds AC17 (Stakeholder Inbox fix — real frontend change). v1.4 formalizes AC18/AC7-role-only (already-correct backend behavior, confirmation tests only). Tasks T11-T15 added; next step is TDD — add frontend test infra (T11), then RED/GREEN per task order. No code touched yet. |
+| employee-internal-transfer | Employee Internal Transfer | v1.2 Built and tested; v1.3 & v1.4 deltas Under Development (T11 done, T12-T15 pending) | Candidate (assessment) | Day 13 | v1.2 unchanged/live. T11 (frontend test infra) done. Next: T12/T13 (UT19/UT20 confirmation tests), then T14 (UT18 RED, StakeholderInbox.jsx fix, GREEN), then T15 (full regression) before Gate 2. |
 
 ## Day-by-day log
 
@@ -110,3 +110,10 @@ _This is a quick way to see what's going on without needing a meeting._
   GREEN immediately); T14 writes UT18 (expected RED), then implements the
   `StakeholderInbox.jsx` fix; T15 runs the full suite before Gate 2. `test_cases.md`
   synced with UT18/UT19/UT20 rows. No code touched yet.
+- **T11 done** — added Vitest 2.x (pinned for compatibility with the
+  existing `vite@^5.4.8` — not upgrading Vite without an ADR) + React
+  Testing Library + jest-dom + user-event to `frontend/`; added
+  `vitest.config.js`, `tests/setup.js`, and an `npm test` script. Verified
+  with a throwaway smoke test, then removed it. `npm audit` shows known
+  dev-only vulnerabilities in transitive deps that only resolve via a
+  Vite/Vitest major upgrade — flagged, not fixed, pending a decision.
