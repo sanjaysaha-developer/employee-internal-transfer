@@ -134,6 +134,30 @@ describe('employee-internal-transfer.AC6/UT06 — Manager rejects', () => {
   });
 });
 
+// T12 (v1.4 delta) — AC18/UT19: this is a CONFIRMATION test, not a RED-then-
+// GREEN one. The Plan Delta (employee-internal-transfer.plan.md) found the
+// notes field was already returned unconditionally for every action type —
+// see backend/src/services/transferService.js (~line 152) — so this is
+// expected to pass on its first run, making already-correct behavior
+// explicit and tested per the Gate 1 review (Finding 3/AMBER).
+describe('employee-internal-transfer.AC18/UT19 — rejection reason visibility', () => {
+  it('includes the rejecting action\'s notes when the employee views a Rejected request', async () => {
+    const created = await submit(ADITI);
+    const detail1 = await request(app).get(`/api/v1/transfer-requests/${created.body.id}`).set(asEmployee(ADITI));
+    const managerAction = detail1.body.actions.find((a) => a.type === 'MANAGER');
+
+    await request(app)
+      .patch(`/api/v1/transfer-requests/${created.body.id}/actions/${managerAction.id}`)
+      .set(asEmployee(ROHAN_MANAGER))
+      .send({ decision: 'REJECT', notes: 'Not eligible yet' });
+
+    const detail2 = await request(app).get(`/api/v1/transfer-requests/${created.body.id}`).set(asEmployee(ADITI));
+    expect(detail2.body.status).toBe('Rejected');
+    const rejectedManagerAction = detail2.body.actions.find((a) => a.type === 'MANAGER');
+    expect(rejectedManagerAction.notes).toBe('Not eligible yet');
+  });
+});
+
 async function driveToHRReview(employeeId, managerId, overrides = {}) {
   const created = await submit(employeeId, overrides);
   const detail = await request(app).get(`/api/v1/transfer-requests/${created.body.id}`).set(asEmployee(employeeId));
@@ -145,7 +169,7 @@ async function driveToHRReview(employeeId, managerId, overrides = {}) {
   return created.body.id;
 }
 
-describe('employee-internal-transfer.AC7/UT07/UT08 — HR approves, conditional downstream', () => {
+describe('employee-internal-transfer.AC7/UT07/UT08/UT20 — HR approves, conditional downstream', () => {
   it('UT07: dept+role unchanged, location changed => no PAYROLL, yes FACILITIES, yes IT', async () => {
     const id = await driveToHRReview(ADITI, ROHAN_MANAGER, {
       proposedDepartment: 'Engineering', // unchanged
@@ -170,6 +194,29 @@ describe('employee-internal-transfer.AC7/UT07/UT08 — HR approves, conditional 
     const id = await driveToHRReview(ADITI, ROHAN_MANAGER, {
       proposedDepartment: 'Product', // changed
       proposedRole: 'Software Engineer',
+      proposedLocation: 'Bengaluru', // unchanged
+    });
+    await request(app)
+      .patch(`/api/v1/transfer-requests/${id}/actions/${(await getActionId(id, 'HR'))}`)
+      .set(asRole(PRIYA_HR_PERSON, 'HR'))
+      .send({ decision: 'APPROVE' });
+
+    const detail = await request(app).get(`/api/v1/transfer-requests/${id}`).set(asEmployee(ADITI));
+    const types = detail.body.actions.map((a) => a.type);
+    expect(types).toContain('IT');
+    expect(types).toContain('PAYROLL');
+    expect(types).not.toContain('FACILITIES');
+  });
+
+  // T13 (v1.4 delta) — CONFIRMATION test, not RED-then-GREEN: the Plan Delta
+  // found `roleOrDeptChanged` (transferService.js, ~line 314) already treats
+  // a role-only change the same as a department change, so this combination
+  // was already correctly handled — it just wasn't tested (Gate 1 review
+  // Finding 8/GREEN). Expected to pass on its first run.
+  it('UT20: role changed, dept+location unchanged => yes PAYROLL, no FACILITIES, yes IT', async () => {
+    const id = await driveToHRReview(ADITI, ROHAN_MANAGER, {
+      proposedDepartment: 'Engineering', // unchanged
+      proposedRole: 'Staff Software Engineer', // changed
       proposedLocation: 'Bengaluru', // unchanged
     });
     await request(app)

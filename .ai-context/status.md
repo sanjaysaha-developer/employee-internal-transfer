@@ -4,7 +4,7 @@ _This is a quick way to see what's going on without needing a meeting._
 ## Active work
 | Feature | Title | Status | Owner | Last update | Notes |
 |---|---|---|---|---|---|
-| employee-internal-transfer | Employee Internal Transfer | v1.2 Built and tested; v1.3 & v1.4 deltas In Peer Review (Gate 1) | Candidate (assessment) | Day 12 | v1.2 unchanged/live. v1.3 proposes AC17 (Stakeholder Inbox fix). v1.4 closes the Gate 1 review's conditions (AC18 + doc gaps). Neither has been implemented yet. |
+| employee-internal-transfer | Employee Internal Transfer | v1.2 Built and tested; v1.3 & v1.4 deltas Development complete (T11-T15 done) — ready for Gate 2 | Candidate (assessment) | Day 13 | v1.2 unchanged/live. All delta tasks (T11-T15) done: backend 22/22, frontend 2/2, no regressions. AC17 fix implemented in StakeholderInbox.jsx; AC18/AC7-role-only confirmed already-correct. Next: Gate 2 code review. |
 
 ## Day-by-day log
 
@@ -77,3 +77,58 @@ _This is a quick way to see what's going on without needing a meeting._
   - Spec bumped to **v1.4**, status "In Peer Review"; Gate Approvals &
     History table updated with the review outcome. Nothing implemented yet —
     next step is closing v1.3 + v1.4 Gate 1 before touching any code.
+
+### Day 13 — Gate 1 formally closed
+- User supplied `Gate1_Review_SanjaySaha.docx` again and confirmed the
+  Project Manager (Supratim Jetty, approver of record — see
+  `project_context.md` Roles & Approvers) has approved the spec, with the
+  review's conditions to be verified.
+- Audited the full docx text line-by-line against the current repo (not just
+  the earlier summary): all 8 findings (1 RED, 5 AMBER, 2 GREEN) were
+  confirmed already closed in v1.4 — no spec content changed as part of this
+  closeout, only the formal sign-off was missing.
+- Recorded the closeout as
+  `.ai-context/pr_reviews/GATE1-employee-internal-transfer-v1.4.md`, updated
+  the spec's Gate Approvals & History table (v1.3 delta + v1.4
+  conditions-closure row → **Approved**, 2026-09-14), and flipped the spec
+  Status line from "In Peer Review" to "Approved (Gate 1 Passed)".
+- Next step: generate/update the Plan and Tasks for the v1.3 (AC17) + v1.4
+  (AC18) deltas — no code has been touched yet.
+- **Plan Delta added** to `.ai-context/plans/employee-internal-transfer.plan.md`
+  ("Plan Delta — v1.3/v1.4" section): AC17 needs a real frontend fix (reset
+  `actAsRole` in `StakeholderInbox.jsx` when `employeeId` changes); AC18
+  needs **no code change** — confirmed the backend (`transferService.js`)
+  already returns rejection `notes` via API02 and already gates the response
+  with the AC14 403 check, so it only needs new test case UT19 to make the
+  existing behavior explicit and tested. Next step: Task breakdown, then TDD
+  RED (UT18 should fail today, UT19 should already pass) before touching
+  `StakeholderInbox.jsx`.
+- **Tasks generated** (`employee-internal-transfer.tasks.md`, T11-T15):
+  T11 adds missing frontend test infrastructure (no test runner/RTL exists
+  yet — constitution gap, not previously needed since v1.2 had no frontend
+  logic tests); T12/T13 write UT19/UT20 as confirmation tests (expected
+  GREEN immediately); T14 writes UT18 (expected RED), then implements the
+  `StakeholderInbox.jsx` fix; T15 runs the full suite before Gate 2. `test_cases.md`
+  synced with UT18/UT19/UT20 rows. No code touched yet.
+- **T11 done** — added Vitest 2.x (pinned for compatibility with the
+  existing `vite@^5.4.8` — not upgrading Vite without an ADR) + React
+  Testing Library + jest-dom + user-event to `frontend/`; added
+  `vitest.config.js`, `tests/setup.js`, and an `npm test` script. Verified
+  with a throwaway smoke test, then removed it. `npm audit` shows known
+  dev-only vulnerabilities in transitive deps that only resolve via a
+  Vite/Vitest major upgrade — flagged, not fixed, pending a decision.
+- **T12/T13 done** — added UT19 (AC18) and UT20 (AC7 role-only fan-out) to
+  `backend/tests/transferRequests.test.js`. Ran against a real Postgres
+  (`docker compose up -d postgres`, migrated) — both passed on first run as
+  predicted, zero implementation change. Full backend suite: **22/22
+  passing** (20 baseline + UT19 + UT20). Next: T14 (UT18, the one real code
+  change in this delta).
+- **T14/T15 done** — UT18 added to
+  `frontend/tests/pages/StakeholderInbox.test.jsx`, confirmed RED, then
+  implemented the AC17 fix in `StakeholderInbox.jsx`. First implementation
+  attempt (plain `useEffect` on `employeeId` resetting `actAsRole`) went
+  GREEN but a debug check caught it firing one avoidable API call under the
+  *new* identity with the *stale* role first — fixed with a
+  `prevEmployeeIdRef` guard so exactly one, correctly-scoped call happens.
+  Full regression: backend 22/22, frontend 2/2, no regressions. **All delta
+  tasks (T11-T15) complete — ready for Gate 2.**

@@ -1,7 +1,10 @@
 # Plan: Employee Internal Transfer
 
 ## Based on
-`.ai-context/specs/employee-internal-transfer.spec.md` (version 1.2, approved)
+`.ai-context/specs/employee-internal-transfer.spec.md` (version 1.2, approved
+— base plan below; version 1.4, Gate 1 Approved 2026-09-14, see
+`.ai-context/pr_reviews/GATE1-employee-internal-transfer-v1.4.md` — delta
+plan in "Plan Delta — v1.3/v1.4" section at the end of this file)
 
 ## How we're building it
 - **Tools (as requested):** Node.js + Express for the backend, PostgreSQL for
@@ -135,3 +138,73 @@ CREATE TABLE stakeholder_actions (
 5. Confirm + cancel endpoints.
 6. The "see my pending items" endpoint — added after the review.
 7. The frontend: submit form, status/timeline page, and the shared team inbox.
+
+---
+
+## Plan Delta — v1.3 (AC17) + v1.4 (AC18)
+_Added 2026-09-14, after Gate 1 Approval of spec v1.4 — see
+`.ai-context/pr_reviews/GATE1-employee-internal-transfer-v1.4.md`. No code
+has been touched yet; this section only plans the two ACs. T01–T10 above
+remain unchanged and complete._
+
+### Architecture Approach
+Both ACs stay entirely inside the existing monolith — no new component,
+service, table, or endpoint. One is a frontend-only bug fix; the other turns
+out to need no code change at all, only a new automated test.
+
+- **AC17 (frontend-only)** — `frontend/src/pages/StakeholderInbox.jsx`
+  already holds an `actAsRole` state (the "Acting as" selector) alongside the
+  `employeeId` prop (the "Logged in as" identity, owned by `App.jsx`). Today,
+  `actAsRole` only resets when the user changes it directly — switching
+  `employeeId` re-runs the `refresh()` effect (line 26, dependency array
+  `[employeeId, actAsRole]`) but leaves a stale `actAsRole` value in place, so
+  a previously-selected team queue (e.g. PAYROLL) stays selected under the
+  new identity. The fix is a small `useEffect` keyed on `employeeId` alone
+  that calls `setActAsRole('')` whenever it changes, before the existing
+  refresh effect re-fires. No prop/API shape changes; `App.jsx` is untouched
+  because `employeeId` is already passed down as a prop.
+- **AC18 (no code change)** — confirmed in `backend/src/services/transferService.js`:
+  the `actions[]` mapping (~line 152) already includes `notes: row.notes` for
+  every action type unconditionally, and the AC14 ownership/assignment check
+  (~line 190-197) already gates the whole response, not individual fields —
+  so a `Rejected` request's rejection reason is already returned to the
+  employee via API02 exactly as AC18 describes. This AC formalizes existing,
+  already-correct behavior; the only new artifact is test case UT19 (TDD RED
+  → confirm it's already GREEN, per constitution "no retrofitting tests"
+  — see note under Sequencing).
+
+### Data Model
+No schema changes. `stakeholder_actions.notes` (existing column) is the field
+AC18 concerns; `actAsRole` is frontend-only React state, not persisted.
+
+### Constitution Check
+- [x] No new datastore introduced — untouched.
+- [x] Testing discipline matches `constitution.md` — UT18 (AC17) and UT19
+      (AC18) will be written and run before/alongside the fix, not retrofitted
+      after; UT19 is expected to pass immediately (GREEN on first run) since
+      it exercises already-correct behavior — this is treated as a
+      confirmation test, not a TDD RED→GREEN cycle, and will be called out as
+      such in the Gate 2 evidence so it isn't mistaken for retrofitting.
+- [x] Security posture matches `constitution.md` — no auth/authorization
+      change; AC14's existing 403 gate is unaffected by AC18.
+
+### Explicitly Deferred
+- Renumbering API07 to be sequential — deferred per the spec's own numbering
+  note (Gate 1 Finding 7); a documentation note was judged sufficient instead.
+- Any change to the "Acting as" UX beyond the reset-on-identity-change
+  behavior (e.g. remembering a per-employee last-selected role) — out of
+  scope for AC17, not requested by the review.
+
+### Sequencing
+1. Add **UT18** (AC17, frontend) and **UT19** (AC18, backend) test case specs
+   to `.ai-context/test_cases/employee-internal-transfer.test_cases.md`.
+2. Write the executable UT19 test first against
+   `backend/src/services/transferService.js` / `tests/backend/` — confirm it
+   is already GREEN (documents the existing, already-correct behavior; no
+   implementation change follows it).
+3. Write the executable UT18 test first against
+   `frontend/src/pages/StakeholderInbox.jsx` / `tests/frontend/` — confirm RED
+   (fails today, since the reset doesn't exist yet).
+4. Implement the `useEffect` reset in `StakeholderInbox.jsx` — confirm UT18
+   goes GREEN, and re-run the full suite to confirm no regression.
+5. Submit for Gate 2 review.

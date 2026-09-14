@@ -4,10 +4,13 @@
 employee-internal-transfer
 
 ## Status
-Version 1.4 — **In Peer Review (Gate 1)**. v1.2 remains Approved and in
-production. v1.3 (AC17, the Stakeholder Inbox UI fix) and v1.4 (this round —
-closing the conditions from the Gate 1 peer review) are both pending sign-off
-before any further code changes.
+Version 1.4 — **Approved (Gate 1 Passed)**. v1.2 remains Approved and in
+production. v1.3 (AC17, the Stakeholder Inbox UI fix) and v1.4 (closing the
+conditions from the 08-Sep-2026 Gate 1 peer review) were confirmed Approved
+by Supratim Jetty (approver of record) on 2026-09-14 — see
+`.ai-context/pr_reviews/GATE1-employee-internal-transfer-v1.4.md`. Plan/Tasks
+generation for the v1.3/v1.4 deltas is the next step; no code has been
+touched yet.
 
 **How we got here, in short:**
 - v1.0 → v1.1: A review before coding (see `assessment/09-gate1-review.md`)
@@ -58,8 +61,8 @@ before any further code changes.
 |---|---|---|---|---|
 | Gate 1 (Spec Review, v1.0→v1.1) | — | — | Approved | See `assessment/09-gate1-review.md` |
 | Gate 2 (Code Review, v1.2) | — | — | Approved | See `assessment/10-gate2-evidence.md` |
-| Gate 1 (Spec Review, v1.3 delta — AC17) | _pending_ | _pending_ | _pending_ | _pending — see AC17 below_ |
-| Gate 1 (Peer Review, full package) | Soumyadeep (INT Delivery Leadership) | 2026-09-08 | Approved With Conditions | See `Gate1_Review_SanjaySaha.docx` — conditions closed in this v1.4 delta |
+| Gate 1 (Peer Review, full package) | Soumyadeep (INT Delivery Leadership) | 2026-09-08 | Approved With Conditions | See `Gate1_Review_SanjaySaha.docx` — 1 RED + 5 AMBER + 2 GREEN findings |
+| Gate 1 (Spec Review, v1.3 delta — AC17 + v1.4 conditions closure) | Supratim Jetty (approver of record) | 2026-09-14 | **Approved** | All 8 findings verified closed in v1.4 (BRD OQ1-3, AC18/UT19, API02 403 row, rate-limiting NFR, downstream-timeout out-of-scope note, API07 numbering note, UT20). See `.ai-context/pr_reviews/GATE1-employee-internal-transfer-v1.4.md` |
 
 ## Linked BRD
 .ai-context/BRD.md#BRD-001
