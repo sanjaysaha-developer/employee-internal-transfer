@@ -57,16 +57,24 @@ No code has been touched yet. One task at a time, per policy._
       transitive deps that only resolve via a Vite/Vitest major upgrade;
       left as-is pending a decision on upgrading Vite (out of scope for this
       task).
-- [ ] **T12** — Write **UT19** (AC18) against
+- [x] **T12** — Write **UT19** (AC18) against
       `backend/src/services/transferService.js` / `backend/tests/`. Run it
       and confirm it's already **GREEN** — the Plan Delta found `notes` is
       already returned unconditionally in the `actions[]` mapping. This is a
       confirmation test, not a RED→GREEN cycle; note that explicitly in the
       test run evidence for Gate 2 so it isn't mistaken for retrofitting.
-- [ ] **T13** — Write **UT20** (AC7, role-only fan-out) the same way, against
+      **Done:** added to `backend/tests/transferRequests.test.js`
+      (`employee-internal-transfer.AC18/UT19` block). Ran against a real
+      Postgres (`docker compose up -d postgres` + migrate) — passed
+      immediately as predicted, no code change.
+- [x] **T13** — Write **UT20** (AC7, role-only fan-out) the same way, against
       the same file. Confirm it's already **GREEN** — the Plan Delta found
       `roleOrDeptChanged` already covers a role-only change correctly. Same
       confirmation-test note applies.
+      **Done:** added as a third case in the existing
+      `employee-internal-transfer.AC7/UT07/UT08` describe block (renamed to
+      include UT20). Full suite run: **22/22 passing** (20 baseline + UT19 +
+      UT20), no code change.
 - [ ] **T14** — Write **UT18** (AC17) against
       `frontend/src/pages/StakeholderInbox.jsx` (needs T11 done first). Run
       it and confirm it's **RED** — the "Acting as" selector does not yet

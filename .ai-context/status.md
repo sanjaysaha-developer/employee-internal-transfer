@@ -4,7 +4,7 @@ _This is a quick way to see what's going on without needing a meeting._
 ## Active work
 | Feature | Title | Status | Owner | Last update | Notes |
 |---|---|---|---|---|---|
-| employee-internal-transfer | Employee Internal Transfer | v1.2 Built and tested; v1.3 & v1.4 deltas Under Development (T11 done, T12-T15 pending) | Candidate (assessment) | Day 13 | v1.2 unchanged/live. T11 (frontend test infra) done. Next: T12/T13 (UT19/UT20 confirmation tests), then T14 (UT18 RED, StakeholderInbox.jsx fix, GREEN), then T15 (full regression) before Gate 2. |
+| employee-internal-transfer | Employee Internal Transfer | v1.2 Built and tested; v1.3 & v1.4 deltas Under Development (T11-T13 done, T14-T15 pending) | Candidate (assessment) | Day 13 | v1.2 unchanged/live. T11 (frontend test infra), T12/T13 (UT19/UT20, both confirmed GREEN, no code change) done — 22/22 backend tests passing. Next: T14 (UT18 RED, StakeholderInbox.jsx fix, GREEN), then T15 (full regression) before Gate 2. |
 
 ## Day-by-day log
 
@@ -117,3 +117,9 @@ _This is a quick way to see what's going on without needing a meeting._
   with a throwaway smoke test, then removed it. `npm audit` shows known
   dev-only vulnerabilities in transitive deps that only resolve via a
   Vite/Vitest major upgrade — flagged, not fixed, pending a decision.
+- **T12/T13 done** — added UT19 (AC18) and UT20 (AC7 role-only fan-out) to
+  `backend/tests/transferRequests.test.js`. Ran against a real Postgres
+  (`docker compose up -d postgres`, migrated) — both passed on first run as
+  predicted, zero implementation change. Full backend suite: **22/22
+  passing** (20 baseline + UT19 + UT20). Next: T14 (UT18, the one real code
+  change in this delta).
